@@ -1,12 +1,66 @@
-# React + Vite
+# Samsung Library Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern library management web application built with **React** and **Vite**.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Book management (CRUD)
+- Member management
+- Borrow & return books
+- Top books & members
+- Responsive UI (mobile, tablet, desktop)
+- Dark mode
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 1. Clone the repository
+
+```sh
+git clone https://github.com/donaabdillahula/samsung-web-fe.git
+cd samsung-web-fe
+```
+
+### 2. Install dependencies
+
+```sh
+npm install
+```
+
+### 3. Run the development server
+
+```sh
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) to view the app in your browser.
+
+## Environment Variables
+
+Edit the `.env` file to set your API endpoint:
+
+```
+VITE_API_URL="https://your-api-url"
+```
+
+## Build for Production
+
+```sh
+npm run build
+```
+
+## Docker Support
+
+Build and run with Docker:
+
+```sh
+docker build -t yourusername/samsung-web-fe .
+docker run -p 8080:80 yourusername/samsung-web-fe
+```
+
+## License
+
+MIT
+
+---
+
+Made with ❤️ by Dona Abdillah Ula
