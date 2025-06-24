@@ -37,7 +37,7 @@ const Authors = () => {
           setAuthors(response.data || []);
           setTotalPages(response.totalPage || 1);
         } catch (error) {
-          console.error("Error fetching filtered authors:", error);
+          console.error("Error fetching filtered authors:", error?.errorMessage);
           setAuthors([]);
           setTotalPages(1);
         } finally {
@@ -56,7 +56,7 @@ const Authors = () => {
           setAuthors(response.data || []);
           setTotalPages(response.totalPage || 1);
         } catch (error) {
-          console.error("Error fetching authors:", error);
+          console.error("Error fetching authors:", error?.errorMessage);
           setAuthors([]);
           setTotalPages(1);
         } finally {
@@ -82,8 +82,8 @@ const Authors = () => {
       const response = await authorService.getAllAuthors(page - 1, PAGE_SIZE);
       setAuthors(response.data || []);
       setTotalPages(response.totalPage || 1);
-    } catch (err) {
-      alert("Failed to create author, " + err.message);
+    } catch (error) {
+      alert("Failed to create author, " + error?.errorMessage);
     } finally {
       setLoading(false);
     }

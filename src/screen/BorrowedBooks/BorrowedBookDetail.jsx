@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { UseDependency } from "../../shared/hooks/UseDependency";
 import { FormatDate } from "../../utils/TimeFormat";
+import { APP_NAVIGATION } from "../../shared/Constants";
 
 const BorrowedBookDetail = () => {
   const { borrowedBookService, bookService, memberService } = UseDependency();
@@ -87,11 +88,13 @@ const BorrowedBookDetail = () => {
       setLoading(true);
       try {
         await borrowedBookService.deleteBorrowedBook(id);
-        navigate("/borrowedBooks");
+        navigate(APP_NAVIGATION.BORROWED_BOOKS);
       } catch (error) {
-        alert("Failed to delete borrowedBook: " + error);
+        console.log("Failed to delete borrowed book: "+ error.errorMessage);
+        alert("Failed to delete borrowed book");
       } finally {
         setLoading(false);
+        navigate(APP_NAVIGATION.BORROWED_BOOKS);
       }
     }
   };

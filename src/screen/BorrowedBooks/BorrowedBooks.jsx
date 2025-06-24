@@ -76,8 +76,8 @@ const BorrowedBooks = () => {
     setLoading(true);
     try {
       await borrowedBookService.createNewBorrowedBook(
-        { id: newBorrowedBook.memberId },
-        { id: newBorrowedBook.bookId }
+        { id: Number(newBorrowedBook.memberId) },
+        { id: Number(newBorrowedBook.bookId) }
       );
       setShowCreate(false);
       setNewBorrowedBook({ bookId: 0, memberId: 0 });

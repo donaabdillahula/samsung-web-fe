@@ -4,9 +4,10 @@ import { UseDependency } from "../../shared/hooks/UseDependency";
 import { FormatDate } from "../../utils/TimeFormat";
 import FormData from "form-data";
 import BorrowPopup from "../../components/BorrowPopup/BorrowPopup";
+import { APP_NAVIGATION } from "../../shared/Constants";
 
 const BookDetail = () => {
-  const { bookService, authorService } = UseDependency();
+  const { bookService, authorService, borrowedBookService } = UseDependency();
   const [authors, setAuthors] = useState([]);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -32,12 +33,7 @@ const BookDetail = () => {
   });
 
   const [borrowPopup, setBorrowPopup] = useState(false);
-  const [selectedBookId, setSelectedBookId] = useState(0);
-
-  const handleBorrowPopup = (selectedBookId) => {
-    setSelectedBookId(selectedBookId);
-    setBorrowPopup(!borrowPopup);
-  };
+  const [selectedMemberId, setSelectedMemberId] = useState(0);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -77,7 +73,7 @@ const BookDetail = () => {
       };
       fetchAuthors();
     }
-  }, [id, editMode, bookService, authorService]);
+  }, [authorService, bookService, editMode, id, borrowPopup]);
 
   const handleEdit = () => setEditMode(true);
 
@@ -100,6 +96,23 @@ const BookDetail = () => {
         ...prev,
         [name]: value,
       }));
+    }
+  };
+
+  // Create borrowedBook handler
+  const handleCreateBorrowedBook = async () => {
+    setLoading(true);
+    try {
+      await borrowedBookService.createNewBorrowedBook(
+        { id: Number(selectedMemberId) },
+        { id: Number(id) }
+      );
+      setBorrowPopup(false);
+      setSelectedMemberId(0);
+    } catch (err) {
+      alert("Failed to create borrowed book, " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -139,11 +152,13 @@ const BookDetail = () => {
       try {
         // Ganti dengan API delete asli jika sudah ada
         await bookService.deleteBook(id);
-        navigate("/books");
+        navigate(APP_NAVIGATION.BOOKS);
       } catch (error) {
-        alert("Failed to delete book: " + error);
+        console.log("Failed to delete book: "+ error.errorMessage);
+        alert("Cannot delete book: borrowed books data exist. Remove related records first.");
       } finally {
         setLoading(false);
+        navigate(APP_NAVIGATION.BOOKS);
       }
     }
   };
@@ -170,7 +185,7 @@ const BookDetail = () => {
                   placeholder="Title"
                 />
                 <textarea
-                  className="w-full rounded-xl border border-gray-300 dark:border-gray-500 bg-grey-300 dark:bg-gray-600 p-2"
+                  className="w-full h-[100px] rounded-xl border border-gray-300 dark:border-gray-500 bg-grey-300 dark:bg-gray-600 p-2"
                   name="description"
                   value={form.description}
                   onChange={handleChange}
@@ -178,7 +193,7 @@ const BookDetail = () => {
                 />
                 {/* Dropdown Author */}
                 <select
-                  className="w-full rounded-xl border border-gray-300 dark:border-gray-500 bg-grey-300 dark:bg-gray-600 px-2 py-1 mb-3"
+                  className="w-full rounded-xl border border-gray-300 dark:border-gray-500 bg-grey-300 dark:bg-gray-600 p-2"
                   name="author"
                   value={form.author?.id || 0}
                   onChange={handleChange}
@@ -207,15 +222,13 @@ const BookDetail = () => {
                   onChange={handleChange}
                   placeholder="Year"
                 />
-                <select
+                <input
                   className="w-full rounded-xl border border-gray-300 dark:border-gray-500 bg-grey-300 dark:bg-gray-600 p-2"
                   name="status"
                   value={form.status}
                   onChange={handleChange}
-                >
-                  <option value="AVAILABLE">AVAILABLE</option>
-                  <option value="BORROWED">BORROWED</option>
-                </select>
+                  disabled
+                />
                 <div className="flex gap-2 mt-2">
                   <button
                     type="submit"
@@ -270,7 +283,7 @@ const BookDetail = () => {
                     {book && book?.status == "AVAILABLE" && (
                       <button
                         className="bg-gradient-to-r from-primary to-secondary hover:scale-105 duration-200 text-white py-2 px-4 rounded-full"
-                        onClick={handleBorrowPopup}
+                        onClick={() => setBorrowPopup(true)}
                       >
                         Borrow
                       </button>
@@ -296,11 +309,14 @@ const BookDetail = () => {
           </div>
         </div>
       )}
-      <BorrowPopup
-        borrowPopup={borrowPopup}
-        setBorrowPopup={setBorrowPopup}
-        selectedBookId={selectedBookId}
-      />
+      {borrowPopup && (
+        <BorrowPopup
+          selectedMemberId={selectedMemberId}
+          setSelectedMemberId={setSelectedMemberId}
+          setBorrowPopup={setBorrowPopup}
+          handleCreateBorrowedBook={handleCreateBorrowedBook}
+        />
+      )}
     </div>
   );
 };

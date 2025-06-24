@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Vector from "../../assets/website/blue-pattern.png";
 
-const Hero = ({ handleBorrowPopup, newestBooks }) => {
+const Hero = ({ setSelectedBookId, setBorrowPopup, newestBooks}) => {
   const [bookShow, setBookShow] = useState(newestBooks[0]);
   const bgImage = {
     backgroundImage: `url(${Vector})`,
@@ -46,7 +46,10 @@ const Hero = ({ handleBorrowPopup, newestBooks }) => {
               </p>
               <div>
                 <button
-                  onClick={handleBorrowPopup}
+                  onClick={()=>{
+                    setSelectedBookId(bookShow?.id)
+                    setBorrowPopup(true)
+                  }}
                   className="bg-gradient-to-r from-primary to-secondary hover:scale-105 duration-200 text-white py-2 px-4 rounded-full"
                 >
                   Borrow

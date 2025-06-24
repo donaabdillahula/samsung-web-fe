@@ -33,14 +33,12 @@ const TopBooks = ({ topBooks }) => {
                   />
                 </div>
                 <div className="p-3 text-center flex-1 flex flex-col justify-between">
-                  <div className="flex flex-col items-center">
-                    <h1 className="text-base sm:text-lg md:text-xl font-bold">
+                    <h1 className="text-base sm:text-lg md:text-xl font-bold truncate">
                       {book.title}
                     </h1>
-                    <p className="text-gray-500 group-hover:text-white duration-300 text-xs sm:text-sm line-clamp-2 truncate">
+                    <p className="text-gray-500 group-hover:text-white duration-300 text-xs sm:text-sm truncate">
                       {book.description}
                     </p>
-                  </div>
                   <div className="flex flex-col items-center justify-center">
                   <button
                     className="bg-primary max-w-[150px] hover:scale-105 duration-300 text-white py-1 px-4 mb-2 rounded-full group-hover:bg-white group-hover:text-primary"

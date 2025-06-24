@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { UseDependency } from "../../shared/hooks/UseDependency";
 import { FormatDate } from "../../utils/TimeFormat";
+import { APP_NAVIGATION } from "../../shared/Constants";
 
 const MemberDetail = () => {
   const { memberService } = UseDependency();
@@ -57,11 +58,13 @@ const MemberDetail = () => {
       setLoading(true);
       try {
         await memberService.deleteMember(id);
-        navigate("/members");
+        navigate(APP_NAVIGATION.MEMBERS);
       } catch (error) {
-        alert("Failed to delete member: " + error);
+        console.log("Failed to delete member: "+ error.errorMessage);
+        alert("Cannot delete member: borrowed books data exist. Remove related records first.");
       } finally {
         setLoading(false);
+        navigate(APP_NAVIGATION.MEMBERS);
       }
     }
   };

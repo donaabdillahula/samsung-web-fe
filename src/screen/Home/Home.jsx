@@ -8,18 +8,15 @@ import { UseDependency } from "../../shared/hooks/UseDependency";
 import BorrowPopup from "../../components/BorrowPopup/BorrowPopup";
 
 const Home = () => {
-  const { bookService, memberService } = UseDependency();
+  const { bookService, memberService, borrowedBookService } = UseDependency();
   const [newestBooks, setNewestBooks] = useState([]);
   const [topBooks, setTopBooks] = useState([]);
   const [topMembers, setTopMembers] = useState([]);
   const [borrowPopup, setBorrowPopup] = useState(false);
-  const [selectedBookId, setSelectedBookId] = useState(0)
-  const [loading, setLoading] = useState(true);
+  const [selectedBookId, setSelectedBookId] = useState(0);
+  const [selectedMemberId, setSelectedMemberId] = useState(0);
 
-  const handleBorrowPopup = (selectedBookId) => {
-    setSelectedBookId(selectedBookId)
-    setBorrowPopup(!borrowPopup);
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,7 +39,7 @@ const Home = () => {
       }
     };
     fetchData();
-  }, [bookService, memberService]);
+  }, [borrowPopup, bookService, memberService]);
 
   if (loading) {
     return (
@@ -52,14 +49,43 @@ const Home = () => {
     );
   }
 
+  // Create borrowedBook handler
+  const handleCreateBorrowedBook = async () => {
+    setLoading(true);
+    try {
+      await borrowedBookService.createNewBorrowedBook(
+        { id: Number(selectedMemberId) },
+        { id: Number(selectedBookId) }
+      );
+      setBorrowPopup(false);
+      setSelectedMemberId(0);
+      setSelectedBookId(0);
+    } catch (err) {
+      alert("Failed to create borrowed book, " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
     <div>
-      <Hero handleBorrowPopup={handleBorrowPopup} newestBooks={newestBooks} />
+      <Hero
+        setSelectedBookId={setSelectedBookId}
+        setBorrowPopup={setBorrowPopup}
+        newestBooks={newestBooks}
+      />
       <TopBooks topBooks={topBooks} />
       <TopMembers topMembers={topMembers} />
       <AppStore />
       <About />
-      <BorrowPopup borrowPopup={borrowPopup} setBorrowPopup={setBorrowPopup} selectedBookId={selectedBookId} />
+      {borrowPopup && (
+        <BorrowPopup
+          selectedMemberId={selectedMemberId}
+          setSelectedMemberId={setSelectedMemberId}
+          setBorrowPopup={setBorrowPopup}
+          handleCreateBorrowedBook={handleCreateBorrowedBook}
+        />
+      )}
     </div>
   );
 };

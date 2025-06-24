@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { UseDependency } from "../../shared/hooks/UseDependency";
 import { FormatDate } from "../../utils/TimeFormat";
+import { APP_NAVIGATION } from "../../shared/Constants";
 
 const AuthorDetail = () => {
   const { authorService } = UseDependency();
@@ -21,9 +22,9 @@ const AuthorDetail = () => {
         setAuthor(response.data || {});
         setForm(response.data || {});
       } catch (error) {
-        console.error("Error fetching author:", error);
+        console.error("Error fetching author:", error?.errorMessage);
         setAuthor(null);
-        setForm(null)
+        setForm(null);
       } finally {
         setLoading(false);
       }
@@ -48,7 +49,7 @@ const AuthorDetail = () => {
       setEditMode(false);
       // Optionally fetch again for fresh data
     } catch (error) {
-      alert("Failed to update author: " + error);
+      alert("Failed to update author: " + error?.errorMessage);
     } finally {
       setLoading(false);
     }
@@ -60,11 +61,13 @@ const AuthorDetail = () => {
       try {
         // Ganti dengan API delete asli jika sudah ada
         await authorService.deleteAuthor(id);
-        navigate("/authors");
+        navigate(APP_NAVIGATION.AUTHORS);
       } catch (error) {
-        alert("Failed to delete author: " + error);
+        console.log("Failed to delete author: "+ error?.errorMessage);
+        alert("Cannot delete author: books data exist. Remove related records first.");
       } finally {
         setLoading(false);
+        navigate(APP_NAVIGATION.AUTHORS);
       }
     }
   };
@@ -90,8 +93,8 @@ const AuthorDetail = () => {
                   placeholder="Name"
                   required
                 />
-                <input
-                  className="w-full rounded-xl border border-gray-300 dark:border-gray-500 bg-grey-300 dark:bg-gray-600 p-2"
+                <textarea
+                  className="w-full h-[100px] rounded-xl border border-gray-300 dark:border-gray-500 bg-grey-300 dark:bg-gray-600 p-2"
                   name="description"
                   value={form.description}
                   onChange={handleChange}
@@ -120,9 +123,7 @@ const AuthorDetail = () => {
                   {author.name}
                 </h2>
                 <div className="mb-4">
-                  <p className="text-gray-700 dark:text-gray-300 mb-2">
-                    <span className="font-semibold">Description:</span> {author.description}
-                  </p>
+                <p className="mb-4 text-gray-700 dark:text-gray-300">{author.description}</p>
                   <p className="text-gray-700 dark:text-gray-300 mb-2">
                     <span className="font-semibold">Created At:</span> {FormatDate(author.createdAt)}
                   </p>
