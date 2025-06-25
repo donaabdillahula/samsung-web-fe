@@ -6,7 +6,6 @@ export default defineConfig({
   plugins: [react()],
   server:{
     open: true,
-    port: 80,
   },
   base: "/samsung-web-fe/"
 })

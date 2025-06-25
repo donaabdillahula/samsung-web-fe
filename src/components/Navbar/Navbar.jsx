@@ -49,16 +49,32 @@ const DropdownLinks = [
 
 const Navbar = () => {
   const navigate = useNavigate();
+
+  const handleSectionClick = (section) => {
+    if (location.pathname !== "/") {
+      // If not on home, navigate then scroll after navigation
+      navigate("/", { replace: false });
+      setTimeout(() => {
+        const el = document.getElementById(section.link.replace("/#", ""));
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 100); // delay to ensure DOM is rendered
+    } else {
+      // If already on home, just scroll
+      const el = document.getElementById(section.link.replace("/#", ""));
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <>
       <div className="shadow-lg bg-white dark:bg-gray-900 dark:text-white duration-200">
         <div className="container py-3 sm:py-0">
           <div className="flex justify-between items-center">
-            <div onClick={() => navigate("/")} className="cursor-pointer">
-              <a
-                href="#"
-                className="font-bold text-xl sm:text-2xl flex gap-2 items-center"
-              >
+            <div
+              onClick={() => navigate(APP_NAVIGATION.HOME)}
+              className="cursor-pointer"
+            >
+              <a className="font-bold text-xl sm:text-2xl flex gap-2 items-center">
                 <img src={Logo} alt="Logo" className="w-8 sm:w-10" />
                 <span className="text-base sm:text-xl">Samsung Library</span>
               </a>
@@ -71,7 +87,7 @@ const Navbar = () => {
                 {Menu.map((menu) => (
                   <li key={menu.id} className="hidden md:inline-block">
                     <a
-                      href={menu.link}
+                      onClick={() => handleSectionClick(menu)}
                       className="inline-block py-4 px-4 hover:text-primary duration-200"
                     >
                       {menu.name}
