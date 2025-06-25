@@ -1,6 +1,7 @@
 name: Deploy Samsung Web Fe to Github Pages
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
